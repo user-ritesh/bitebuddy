@@ -10,7 +10,8 @@ const Add = () => {
         name: "",
         description: "",
         price: "",
-        category: "Salad"
+        category: "Salad",
+        stock: ""
     });
 
     const [image, setImage] = useState(false);
@@ -23,6 +24,7 @@ const Add = () => {
         formData.append("price", Number(data.price));
         formData.append("category", data.category);
         formData.append("image", image);
+        formData.append("stock", Number(data.stock));
         const response = await axios.post(`${url}/api/food/add`, formData);
         if (response.data.success) {
             toast.success(response.data.message)
@@ -30,7 +32,8 @@ const Add = () => {
                 name: "",
                 description: "",
                 price: "",
-                category: "Salad"
+                category: "Salad",
+                stock: ""
             })
             setImage(false);
         }
@@ -76,6 +79,10 @@ const Add = () => {
                             <option value="Pasta">Pasta</option>
                             <option value="Noodles">Noodles</option>
                         </select>
+                    </div>
+                    <div className='add-stock flex-col'>
+                        <p>Product Stock</p>
+                        <input type="Number" name='stock' onChange={onChangeHandler} value={data.stock} placeholder='10' />
                     </div>
                     <div className='add-price flex-col'>
                         <p>Product Price</p>

@@ -7,7 +7,7 @@
 
     const LoginPopup = ({ setShowLogin }) => {
 
-        const { setToken, url,loadCartData } = useContext(StoreContext)
+        const { setToken, setRole, url,loadCartData } = useContext(StoreContext)
         const [currState, setCurrState] = useState("Sign Up");
 
         const [data, setData] = useState({
@@ -35,6 +35,7 @@
             const response = await axios.post(new_url, data);
             if (response.data.success) {
                 setToken(response.data.token)
+                setRole(response.data.role)
                 localStorage.setItem("token", response.data.token)
                 loadCartData({token:response.data.token})
                 setShowLogin(false)

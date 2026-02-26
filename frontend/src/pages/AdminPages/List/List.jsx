@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './List.css'
-import { url } from '../../assets/assets'
+import {url } from '../../../assets/adminAssets/assets';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 

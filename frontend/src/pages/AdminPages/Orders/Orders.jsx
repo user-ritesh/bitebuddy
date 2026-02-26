@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './Orders.css'
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { assets, url } from '../../assets/assets';
+import { assets,url } from '../../../assets/adminAssets/assets';
 
 const Order = () => {
 

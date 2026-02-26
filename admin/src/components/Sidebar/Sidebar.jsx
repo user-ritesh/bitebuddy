@@ -1,6 +1,6 @@
 import React from 'react'
 import  './Sidebar.css'
-import { assets } from '../../assets/assets'
+import { assets } from '../../../../frontend/src/assets/adminAssets/assets'
 import { NavLink } from 'react-router-dom'
 
 const Sidebar = () => {

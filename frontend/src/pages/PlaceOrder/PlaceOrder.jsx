@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../Context/StoreContext'
-import { assets } from '../../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -20,53 +19,64 @@ const PlaceOrder = () => {
         phone: ""
     })
 
-    const { getTotalCartAmount, token, food_list, cartItems, url, setCartItems } = useContext(StoreContext);
-
+    const { getTotalCartAmount, token, food_list, cartItems, url } = useContext(StoreContext);
     const navigate = useNavigate();
 
     const onChangeHandler = (event) => {
-        const name = event.target.name
-        const value = event.target.value
-        setData(data => ({ ...data, [name]: value }))
+        const name = event.target.name;
+        const value = event.target.value;
+        setData(data => ({ ...data, [name]: value }));
     }
 
     const placeOrder = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         let orderItems = [];
-        food_list.map(((item) => {
-            if (cartItems[item._id] > 0) {
-                let itemInfo = item;
-                itemInfo["quantity"] = cartItems[item._id];
-                orderItems.push(itemInfo)
+        
+        food_list.forEach((item) => {
+            // Check for both Spring Boot 'id' and Node.js '_id'
+            let itemId = item.id || item._id; 
+            
+            if (cartItems[itemId] > 0) {
+                // Use spread operator so we don't mutate the original state object
+                let itemInfo = { ...item }; 
+                itemInfo["quantity"] = cartItems[itemId];
+                // Standardize the id before sending to backend
+                itemInfo["id"] = itemId; 
+                orderItems.push(itemInfo);
             }
-        }))
+        });
+
         let orderData = {
             address: data,
             items: orderItems,
             amount: getTotalCartAmount() + 5,
-        }
-        let response = await axios.post(url + "/api/order/place", orderData, { headers: { token } });
-        if (response.data.success) {
-            const { session_url } = response.data;
-            window.location.replace(session_url);
-        }
-        else {
-            toast.error("Something Went Wrong")
+        };
+
+        try {
+            let response = await axios.post(url + "/api/order/place", orderData, { headers: { token } });
+            if (response.data.success) {
+                const { session_url } = response.data;
+                window.location.replace(session_url);
+            } else {
+                toast.error(response.data.message || "Something Went Wrong");
+            }
+        } catch (error) {
+            toast.error("Error connecting to server");
         }
     }
 
     useEffect(() => {
         if (!token) {
-            toast.error("to place an order sign in first")
-            navigate('/cart')
-        }
-        else if (getTotalCartAmount() === 0) {
-            navigate('/cart')
+            toast.error("To place an order sign in first");
+            navigate('/cart');
+        } else if (getTotalCartAmount() === 0) {
+            navigate('/cart');
         }
     }, [token])
 
     return (
         <form onSubmit={placeOrder} className='place-order'>
+            {/* Form HTML remains completely unchanged */}
             <div className="place-order-left">
                 <p className='title'>Delivery Information</p>
                 <div className="multi-field">
@@ -102,4 +112,4 @@ const PlaceOrder = () => {
     )
 }
 
-export default PlaceOrder
+export default PlaceOrder;
